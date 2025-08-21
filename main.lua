@@ -125,6 +125,7 @@ local models = {
   manifestedknowledge = {center = bolt.point(0, 580, 0), boxsize = 200, boxthickness = 60, anim = true},
   chroniclefragment = {center = bolt.point(0, 580, 0), boxsize = 200, boxthickness = 60, anim = true}, -- also elder chronicle
   runesphere = {center = bolt.point(0, 490, 0), boxsize = 350, boxthickness = 120, anim = true}, -- doesn't include the core (see runespherecore)
+  empoweredautocycle = {center = bolt.point(0, 350, 0), boxsize = 450, boxthickness = 100},
 
   -- billboard
   divineblessing = {center = bolt.point(0, 520, 0), boxsize = 300, boxthickness = 90},
@@ -462,6 +463,14 @@ local render3dlookup = {
     return nil
   end,
 
+  [1146] = function (event)
+    -- empowered manual auto cycle
+    local anim = event:animated()
+    local x, y, z = event:vertexpoint(1):get()
+    if not anim and x == 255 and y == 21 and z == -63 then return models.empoweredautocycle end
+    return nil
+  end,
+
   [672] = function (event)
     -- normal fire spirit
     local x, y, z = event:vertexpoint(1):get()
@@ -781,18 +790,28 @@ local rendericonlookup2 = {
 
 local function drawbox (worldpoint, viewmatrix, projmatrix, boxradius, boxthickness)
   local px, py, pz = worldpoint:transform(viewmatrix):get()
+
+  local _, _, _, gameview_height = bolt.gameviewxywh()
+  local _, window_height = bolt.gamewindowsize()
+
+  local view_height_diff = math.abs(window_height - gameview_height - 0)
+
   local left, top, depth = bolt.point(px - boxradius, py + boxradius, pz):transform(projmatrix):aspixels()
   local right, bottom, _ = bolt.point(px + boxradius, py - boxradius, pz):transform(projmatrix):aspixels()
+
   local leftinner, topinner, _ = bolt.point(px + boxthickness - boxradius, py + boxradius - boxthickness, pz):transform(projmatrix):aspixels()
+
   if depth < 0.0 or depth > 1.0 then return end
   left = math.floor(left)
-  top = math.floor(top)
+  top = math.floor(top - view_height_diff)
   right = math.floor(right)
-  bottom = math.floor(bottom)
+  bottom = math.floor(bottom - view_height_diff)
+
   local width = right - left
   local height = bottom - top
-  local edgew = leftinner - left
-  local edgeh = topinner - top
+  local edgew = leftinner - left;
+  local edgeh = topinner - top - view_height_diff
+
   redpixel:drawtoscreen(0, 0, 1, 1, left, top, width, edgeh) -- top
   redpixel:drawtoscreen(0, 0, 1, 1, left, top, edgew, height) -- left
   redpixel:drawtoscreen(0, 0, 1, 1, right - edgew, top, edgew, height) -- right
