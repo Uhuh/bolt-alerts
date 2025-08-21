@@ -44,7 +44,7 @@ if filehash == emptyfilehash:
     exit(1)
 
 with open(metafile, "w") as f:
-    f.write(json.dumps({"sha256": filehash, "version": version, "url": "https://github.com/Adamcake/bolt-alerts/releases/download/{}/{}".format(version, tempfilename)}))
+    f.write(json.dumps({"sha256": filehash, "version": version, "url": "https://github.com/uhuh/bolt-alerts/releases/download/{}/{}".format(version, tempfilename)}))
 
 subprocess.run(["git", "-C", basedir, "add", boltfile, metafile])
 subprocess.run(["git", "-C", basedir, "commit", "-m", "publish {}".format(releasetitle)])
