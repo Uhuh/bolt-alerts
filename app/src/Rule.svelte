@@ -331,6 +331,7 @@
                 <option class="text-black" value="runesphere">Runesphere</option>
                 <option class="text-black" value="runespherecore">Runesphere core</option>
                 <option class="text-black" value="serenspirit">Seren spirits</option>
+                <option class="text-black" value="empoweredautocycle">Empowered Auto Cycle</option>
             </select>
         {:else if ruleType === RuleType.stat}
             <label for="a">Stat:</label>
