@@ -791,11 +791,6 @@ local rendericonlookup2 = {
 local function drawbox (worldpoint, viewmatrix, projmatrix, boxradius, boxthickness)
   local px, py, pz = worldpoint:transform(viewmatrix):get()
 
-  local _, _, _, gameview_height = bolt.gameviewxywh()
-  local _, window_height = bolt.gamewindowsize()
-
-  local view_height_diff = math.abs(window_height - gameview_height - 0)
-
   local left, top, depth = bolt.point(px - boxradius, py + boxradius, pz):transform(projmatrix):aspixels()
   local right, bottom, _ = bolt.point(px + boxradius, py - boxradius, pz):transform(projmatrix):aspixels()
 
@@ -803,14 +798,14 @@ local function drawbox (worldpoint, viewmatrix, projmatrix, boxradius, boxthickn
 
   if depth < 0.0 or depth > 1.0 then return end
   left = math.floor(left)
-  top = math.floor(top - view_height_diff)
+  top = math.floor(top)
   right = math.floor(right)
-  bottom = math.floor(bottom - view_height_diff)
+  bottom = math.floor(bottom)
 
   local width = right - left
   local height = bottom - top
   local edgew = leftinner - left;
-  local edgeh = topinner - top - view_height_diff
+  local edgeh = topinner - top
 
   redpixel:drawtoscreen(0, 0, 1, 1, left, top, width, edgeh) -- top
   redpixel:drawtoscreen(0, 0, 1, 1, left, top, edgew, height) -- left
